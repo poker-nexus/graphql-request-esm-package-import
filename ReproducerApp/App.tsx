@@ -5,7 +5,8 @@
  * @format
  */
 
-import React from 'react';
+import { gql, request } from 'graphql-request';
+import React, { useEffect } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -29,8 +30,29 @@ type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
+const document = gql`
+  {
+    allFilms {
+      films {
+        title
+        director
+        releaseDate
+      }
+    }
+  }
+`;
+
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+
+  useEffect(() => {
+    const makeRequest = async () => {
+      const response = await request('https://swapi-graphql.netlify.app/.netlify/functions/index', document);
+      console.log(response);
+    };
+    makeRequest();
+  }, []);
+
   return (
     <View style={styles.sectionContainer}>
       <Text
